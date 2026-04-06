@@ -1,0 +1,76 @@
+.test-option-group {
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: 1rem;
+}
+.test-option-group:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+.group-title {
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: #0d6efd;
+    font-size: 1.1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.group-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+.group-actions .btn-sm {
+    padding: 0.2rem 0.5rem;
+    font-size: 0.75rem;
+}
+.sub-option {
+    margin-left: 1.5rem;
+    margin-top: 0.5rem;
+    padding-left: 0.5rem;
+    border-left: 2px solid #dee2e6;
+}
+.form-check-inline {
+    margin-right: 1rem;
+}
+.mtu-section {
+    background-color: #f8f9fa;
+    border-radius: 0.375rem;
+    padding: 0.75rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    position: relative;
+}
+.mtu-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+.mtu-title {
+    font-weight: 600;
+}
+.option-group {
+    margin-bottom: 0.75rem;
+}
+.option-label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: #495057;
+    font-size: 0.9rem;
+}
+.option-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+}
+hr {
+    margin: 0.75rem 0;
+}
+.power-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}

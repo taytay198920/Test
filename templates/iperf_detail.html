@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}
+Iperf result
+{% endblock %}
+{% block contents %}
+<h2 class="my-4">MTU=1500</h2>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Speed=autoselect Protocol=TCP</th>
+            <th>Speed=autoselect Protocol=UDP</th>
+            <th>Speed=100M  Protocol=TCP</th>
+            <th>Speed=1000M  Protocol=TCP</th>
+            <th>Speed=2500M  Protocol=TCP</th>
+            <th>Speed=5000M  Protocol=TCP</th>
+            <th>Speed=10000M  Protocol=TCP</th>
+            <th>Speed=100M  Protocol=UDP</th>
+            <th>Speed=1000M  Protocol=UDP</th>
+            <th>Speed=2500M  Protocol=UDP</th>
+            <th>Speed=5000M  Protocol=UDP</th>
+            <th>Speed=10000M  Protocol=UDP</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if result %}
+        <tr>
+            <td>{{ result.mtu1500_autoselect_tcp }}</td>
+            <td>{{ result.mtu1500_autoselect_udp }}</td>
+            <td>{{ result.mtu1500_100_tcp }}</td>
+            <td>{{ result.mtu1500_1g_tcp }}</td>
+            <td>{{ result.mtu1500_2500_tcp }}</td>
+            <td>{{ result.mtu1500_5g_tcp }}</td>
+            <td>{{ result.mtu1500_10g_tcp }}</td>
+            <td>{{ result.mtu1500_100_udp }}</td>
+            <td>{{ result.mtu1500_1g_udp }}</td>
+            <td>{{ result.mtu1500_2500_udp }}</td>
+            <td>{{ result.mtu1500_5g_udp }}</td>
+            <td>{{ result.mtu1500_10g_udp }}</td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="12" class="text-center text-muted py-4">
+                <i class="bi bi-inbox"></i> There is no test record now.
+            </td>
+        </tr>
+        {% endif %}
+    </tbody>
+</table>
+<h2 class="my-4">MTU=9000</h2>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Speed=1000M  Protocol=TCP</th>
+            <th>Speed=2500M  Protocol=TCP</th>
+            <th>Speed=5000M  Protocol=TCP</th>
+            <th>Speed=10000M  Protocol=TCP</th>
+            <th>Speed=1000M  Protocol=UDP</th>
+            <th>Speed=2500M  Protocol=UDP</th>
+            <th>Speed=5000M  Protocol=UDP</th>
+            <th>Speed=10000M  Protocol=UDP</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if result %}
+        <tr>
+            <td>{{ result.mtu9000_1g_tcp }}</td>
+            <td>{{ result.mtu9000_2500_tcp }}</td>
+            <td>{{ result.mtu9000_5g_tcp }}</td>
+            <td>{{ result.mtu9000_10g_tcp }}</td>
+            <td>{{ result.mtu9000_1g_udp }}</td>
+            <td>{{ result.mtu9000_2500_udp }}</td>
+            <td>{{ result.mtu9000_5g_udp }}</td>
+            <td>{{ result.mtu9000_10g_udp }}</td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="8" class="text-center text-muted py-4">
+                <i class="bi bi-inbox"></i> There is no test record now.
+            </td>
+        </tr>
+        {% endif %}
+    </tbody>
+</table>
+{% endblock %}

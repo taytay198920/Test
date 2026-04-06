@@ -1,0 +1,500 @@
+{%  extends 'base.html' %}
+{% block title %}
+Index
+{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+{% endblock %}
+{% block contents %}
+<div class="d-flex justify-content-between align-items-center flex-wrap mb-4 my-4">
+    <h3><i class="bi bi-gear-wide-connected" style="color: blue"></i> Test Setup</h3>
+    <form action="{{ url_for('new_group') }}" method="post" class="d-inline">
+        <button class="btn btn-primary" type="submit"><i class="bi bi-plus-circle"></i> New group</button>
+    </form>
+</div>
+<div class="card">
+    <div class="card-header">
+        <strong>Test Group List</strong>
+        <span class="badge bg-secondary" id="groupCount">0</span>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th style="width: 60px">No.</th>
+                        <th>Client</th>
+                        <th>Server</th>
+                        <th>Switch</th>
+                        <th>Ethernet Cable</th>
+                        <th>Test Bundle</th>
+                        <th>Config</th>
+                        <th>Status</th>
+                        <th class="text-center">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="testGroupBody">
+                    {% if groups %}
+                        {% for group in groups %}
+                            <tr>
+                                <th class="text-center">{{ groups.index(group) + 1 }}</th>
+                                <td>
+                                    <select class="form-select form-select-sm">
+                                        <option value="" disabled {% if not group.client_id %}selected{% endif %}>--- select ---</option>
+                                        {% for client in clients %}
+                                        <option value="{{ client.id }}" {% if group.client_id == client.id %}selected{% endif %}>
+                                            {{ client.unit_no }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="form-select form-select-sm">
+                                        <option value="" disabled {% if not group.server_id %}selected{% endif %}>--- select ---</option>
+                                        {% for server in servers %}
+                                        <option value="{{ server.id }}" {% if group.server_id == server.id %}selected{% endif %}>
+                                            {{ server.unit_no }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="form-select form-select-sm">
+                                        <option value="" disabled {% if not group.switch_id %}selected{% endif %}>--- select ---</option>
+                                        {% for switch in switches %}
+                                        <option value="{{ switch.id }}" {% if group.switch_id == switch.id %}selected{% endif %}>
+                                            {{ switch.model }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </td>
+                                <td>
+                                    <select class="form-select form-select-sm">
+                                        <option value="" disabled {% if not group.cable_id %}selected{% endif %}>--- select ---</option>
+                                        {% for cable in cables %}
+                                        <option value="{{ cable.id }}" {% if group.cable_id == cable.id %}selected{% endif %}>
+                                            {{ cable.cable_info }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                </td>
+                                <td>
+                                    <label>
+                                        <input class="form-control form-control-sm" type="text" value="{{ group.test_bundle }}">
+                                    </label>
+                                </td>
+                                <td>
+                                    <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#config_{{ group.id }}">
+                                        Config
+                                    </button>
+                                    {% if group["modal_config"] %}
+                                    <div class="modal fade" id="config_{{ group.id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+                                        <div class="modal-dialog modal-lg">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h1 class="modal-title fs-5">
+                                                        Test Configuration
+                                                    </h1>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <!-- 1. Basic Test -->
+                                                    <div class="test-option-group">
+                                                        <div class="group-title">Basic Test</div>
+                                                        <div class="form-check">
+                                                            <label for="pingTest_{{ group.id}}">Ping Test</label><input class="form-check-input" type="checkbox" value="ping" id="pingTest_{{ group.id}}" {% if "ping_test" in group.modal_config["basic_test"] %}checked{% endif %}>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- 2. PowerManagement 带全选/取消全选 -->
+                                                    <div class="test-option-group">
+                                                        <div class="group-title">
+                                                            PowerManagement
+                                                            <div class="group-actions">
+                                                                <button type="button" class="btn btn-outline-primary btn-sm select-all-power">Select All</button>
+                                                                <button type="button" class="btn btn-outline-secondary btn-sm deselect-all-power">Unselect All</button>
+                                                            </div>
+                                                        </div>
+                                                        <div class="power-group">
+                                                            <div class="form-check">
+                                                                <input class="form-check-input power-checkbox" type="checkbox" value="restart"
+                                                                    id="restartTest_{{ group.id }}" {% if "restart_test" in group.modal_config["power_management"] %}checked{% endif %}>
+                                                                <label class="form-check-label" for="restartTest_{{ group.id }}">
+                                                                    Restart Test
+                                                                </label>
+                                                            </div>
+                                                            <div class="form-check">
+                                                                <input class="form-check-input power-checkbox" type="checkbox" value="shutdown"
+                                                                    id="shutdownTest_{{ group.id }}" {% if "shutdown_test" in group.modal_config["power_management"] %}checked{% endif %}>
+                                                                <label class="form-check-label" for="shutdownTest_{{ group.id }}">
+                                                                    Shutdown Test
+                                                                </label>
+                                                            </div>
+                                                            <div class="form-check">
+                                                                <input class="form-check-input power-checkbox" type="checkbox" value="sleep"
+                                                                    id="sleepTest_{{ group.id }}" {% if "sleep_test" in group.modal_config["power_management"] %}checked{% endif %}>
+                                                                <label class="form-check-label" for="sleepTest_{{ group.id }}">
+                                                                    Sleep Test
+                                                                </label>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- 3. Iperf Test -->
+                                                    <div class="test-option-group">
+                                                        <div class="group-title">Iperf Test</div>
+
+                                                        <!-- MTU=1500 区块 -->
+                                                        <div class="mtu-section">
+                                                            <div class="mtu-header">
+                                                                <span class="mtu-title">MTU=1500</span>
+                                                                <div class="group-actions">
+                                                                    <button type="button"
+                                                                        class="btn btn-outline-primary btn-sm mtu1500-select-all">Select All</button>
+                                                                    <button type="button"
+                                                                        class="btn btn-outline-secondary btn-sm mtu1500-deselect-all">Unselect All</button>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="option-group">
+                                                                <div class="option-label">Protocol:</div>
+                                                                <div class="option-items">
+                                                                    <div class="form-check form-check-inline">
+                                                                        <input class="form-check-input mtu1500-protocol-checkbox" type="checkbox"
+                                                                            id="mtu1500_tcp_{{ group.id }}" value="TCP" {% if "TCP" in group.modal_config["mtu1500"]["protocols"] %}checked{% endif %}>
+                                                                        <label class="form-check-label" for="mtu1500_tcp_{{ group.id }}">TCP</label>
+                                                                    </div>
+                                                                    <div class="form-check form-check-inline">
+                                                                        <input class="form-check-input mtu1500-protocol-checkbox" type="checkbox"
+                                                                            id="mtu1500_udp_{{ group.id }}" value="UDP" {% if "UDP" in group.modal_config["mtu1500"]["protocols"] %}checked{% endif %}>
+                                                                        <label class="form-check-label" for="mtu1500_udp_{{ group.id }}">UDP</label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="option-group">
+                                                                <div class="option-label">Speed:</div>
+                                                                <div class="option-items">
+                                                                    <div class="form-check form-check-inline">
+                                                                        <input class="form-check-input mtu1500-speed-checkbox" type="checkbox"
+                                                                            id="mtu1500_autoselect_{{ group.id }}" value="autoselect" {% if "autoselect" in group.modal_config["mtu1500"]["speeds"] %}checked{% endif %}>
+                                                                        <label class="form-check-label" for="mtu1500_autoselect_{{ group.id }}">autoselect</label>
+                                                                    </div>
+                                                                    <div class="form-check form-check-inline">
+                                                                        <input class="form-check-input mtu1500-speed-checkbox" type="checkbox"
+                                                                            id="mtu1500_100M_{{ group.id }}" value="100M" {% if "100M" in group.modal_config["mtu1500"]["speeds"] %}checked{% endif %}>
+                                                                        <label class="form-check-label" for="mtu1500_100M_{{ group.id }}">100M</label>
+                                                                    </div>
+                                                                    <div class="form-check form-check-inline">
+                                                                        <input class="form-check-input mtu1500-speed-checkbox" type="checkbox"
+                                                                            id="mtu1500_1000M_{{ group.id }}" value="1000M" {% if "1000M" in group.modal_config["mtu1500"]["speeds"] %}checked{% endif %}>
+                                                                        <label class="form-check-label" for="mtu1500_1000M_{{ group.id }}">1000M</label>
+                                                                    </div>
+                                                                    <div class="form-check form-check-inline">
+                                                                        <input class="form-check-input mtu1500-speed-checkbox" type="checkbox"
+                                                                            id="mtu1500_2500M_{{ group.id }}" value="2500M" {% if "2500M" in group.modal_config["mtu1500"]["speeds"] %}checked{% endif %}>
+                                                                        <label class="form-check-label" for="mtu1500_2500M_{{ group.id }}">2500M</label>
+                                                                    </div>
+                                                                    <div class="form-check form-check-inline">
+                                                                        <input class="form-check-input mtu1500-speed-checkbox" type="checkbox"
+                                                                            id="mtu1500_5000M_{{ group.id }}" value="5000M" {% if "5000M" in group.modal_config["mtu1500"]["speeds"] %}checked{% endif %}>
+                                                                        <label class="form-check-label" for="mtu1500_5000M_{{ group.id }}">5000M</label>
+                                                                    </div>
+                                                                    <div class="form-check form-check-inline">
+                                                                        <input class="form-check-input mtu1500-speed-checkbox" type="checkbox"
+                                                                            id="mtu1500_10G_{{ group.id }}" value="10G" {% if "10G" in group.modal_config["mtu1500"]["speeds"] %}checked{% endif %}>
+                                                                        <label class="form-check-label" for="mtu1500_10G_{{ group.id }}">10G</label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- MTU=9000 区块 -->
+                                                        <div class="mtu-section">
+                                                            <div class="mtu-header">
+                                                                <span class="mtu-title">MTU=9000</span>
+                                                                <div class="group-actions">
+                                                                    <button type="button"
+                                                                        class="btn btn-outline-primary btn-sm mtu9000-select-all">Select All</button>
+                                                                    <button type="button"
+                                                                        class="btn btn-outline-secondary btn-sm mtu9000-deselect-all">Unselect All</button>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="option-group">
+                                                                <div class="option-label">Protocol:</div>
+                                                                <div class="option-items">
+                                                                    <div class="form-check form-check-inline">
+                                                                        <input class="form-check-input mtu9000-protocol-checkbox" type="checkbox"
+                                                                            id="mtu9000_tcp_{{ group.id }}" value="TCP" {% if "TCP" in group.modal_config["mtu9000"]["protocols"] %}checked{% endif %}>
+                                                                        <label class="form-check-label" for="mtu9000_tcp_{{ group.id }}">TCP</label>
+                                                                    </div>
+                                                                    <div class="form-check form-check-inline">
+                                                                        <input class="form-check-input mtu9000-protocol-checkbox" type="checkbox"
+                                                                            id="mtu9000_udp_{{ group.id }}" value="UDP" {% if "UDP" in group.modal_config["mtu9000"]["protocols"] %}checked{% endif %}>
+                                                                        <label class="form-check-label" for="mtu9000_udp_{{ group.id }}">UDP</label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+
+                                                            <div class="option-group">
+                                                                <div class="option-label">Speed:</div>
+                                                                <div class="option-items">
+                                                                    <div class="form-check form-check-inline">
+                                                                        <input class="form-check-input mtu9000-speed-checkbox" type="checkbox"
+                                                                            id="mtu9000_1000M_{{ group.id }}" value="1000M" {% if "1000M" in group.modal_config["mtu9000"]["speeds"] %}checked{% endif %}>
+                                                                        <label class="form-check-label" for="mtu9000_1000M_{{ group.id }}">1000M</label>
+                                                                    </div>
+                                                                    <div class="form-check form-check-inline">
+                                                                        <input class="form-check-input mtu9000-speed-checkbox" type="checkbox"
+                                                                            id="mtu9000_2500M_{{ group.id }}" value="2500M" {% if "2500M" in group.modal_config["mtu9000"]["speeds"] %}checked{% endif %}>
+                                                                        <label class="form-check-label" for="mtu9000_2500M_{{ group.id }}">2500M</label>
+                                                                    </div>
+                                                                    <div class="form-check form-check-inline">
+                                                                        <input class="form-check-input mtu9000-speed-checkbox" type="checkbox"
+                                                                            id="mtu9000_5000M_{{ group.id }}" value="5000M" {% if "5000M" in group.modal_config["mtu9000"]["speeds"] %}checked{% endif %}>
+                                                                        <label class="form-check-label" for="mtu9000_5000M_{{ group.id }}">5000M</label>
+                                                                    </div>
+                                                                    <div class="form-check form-check-inline">
+                                                                        <input class="form-check-input mtu9000-speed-checkbox" type="checkbox"
+                                                                            id="mtu9000_10G_{{ group.id }}" value="10G" {% if "10G" in group.modal_config["mtu9000"]["speeds"] %}checked{% endif %}>
+                                                                        <label class="form-check-label" for="mtu9000_10G_{{ group.id }}">10G</label>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-text text-muted small mt-2">
+                                                            Note: You can select multiple protocols and speeds simultaneously for each MTU configuration.
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                        Close
+                                                    </button>
+                                                    <button type="button" class="btn btn-primary save-config-btn" data-group-id="{{ group.id }}">Save</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                {% else %}
+                                <div class="modal fade" id="config_{{ group.id }}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+                                    <div class="modal-dialog modal-lg">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h1 class="modal-title fs-5">
+                                                    Test Configuration
+                                                </h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <!-- 1. Basic Test -->
+                                                <div class="test-option-group">
+                                                    <div class="group-title">Basic Test</div>
+                                                    <div class="form-check">
+                                                        <label for="pingTest_{{ group.id}}">Ping Test</label><input class="form-check-input" type="checkbox" value="ping" id="pingTest_{{ group.id}}">
+                                                    </div>
+                                                </div>
+
+                                                <!-- 2. PowerManagement 带全选/取消全选 -->
+                                                <div class="test-option-group">
+                                                    <div class="group-title">
+                                                        PowerManagement
+                                                        <div class="group-actions">
+                                                            <button type="button" class="btn btn-outline-primary btn-sm select-all-power">Select All</button>
+                                                            <button type="button" class="btn btn-outline-secondary btn-sm deselect-all-power">Unselect All</button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="power-group">
+                                                        <div class="form-check">
+                                                            <input class="form-check-input power-checkbox" type="checkbox" value="restart"
+                                                                id="restartTest_{{ group.id }}">
+                                                            <label class="form-check-label" for="restartTest_{{ group.id }}">
+                                                                Restart Test
+                                                            </label>
+                                                        </div>
+                                                        <div class="form-check">
+                                                            <input class="form-check-input power-checkbox" type="checkbox" value="shutdown"
+                                                                id="shutdownTest_{{ group.id }}">
+                                                            <label class="form-check-label" for="shutdownTest_{{ group.id }}">
+                                                                Shutdown Test
+                                                            </label>
+                                                        </div>
+                                                        <div class="form-check">
+                                                            <input class="form-check-input power-checkbox" type="checkbox" value="sleep"
+                                                                id="sleepTest_{{ group.id }}">
+                                                            <label class="form-check-label" for="sleepTest_{{ group.id }}">
+                                                                Sleep Test
+                                                            </label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <!-- 3. Iperf Test -->
+                                                <div class="test-option-group">
+                                                    <div class="group-title">Iperf Test</div>
+
+                                                    <!-- MTU=1500 区块 -->
+                                                    <div class="mtu-section">
+                                                        <div class="mtu-header">
+                                                            <span class="mtu-title">MTU=1500</span>
+                                                            <div class="group-actions">
+                                                                <button type="button"
+                                                                    class="btn btn-outline-primary btn-sm mtu1500-select-all">Select All</button>
+                                                                <button type="button"
+                                                                    class="btn btn-outline-secondary btn-sm mtu1500-deselect-all">Unselect All</button>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="option-group">
+                                                            <div class="option-label">Protocol:</div>
+                                                            <div class="option-items">
+                                                                <div class="form-check form-check-inline">
+                                                                    <input class="form-check-input mtu1500-protocol-checkbox" type="checkbox"
+                                                                        id="mtu1500_tcp_{{ group.id }}" value="TCP">
+                                                                    <label class="form-check-label" for="mtu1500_tcp_{{ group.id }}">TCP</label>
+                                                                </div>
+                                                                <div class="form-check form-check-inline">
+                                                                    <input class="form-check-input mtu1500-protocol-checkbox" type="checkbox"
+                                                                        id="mtu1500_udp_{{ group.id }}" value="UDP">
+                                                                    <label class="form-check-label" for="mtu1500_udp_{{ group.id }}">UDP</label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="option-group">
+                                                            <div class="option-label">Speed:</div>
+                                                            <div class="option-items">
+                                                                <div class="form-check form-check-inline">
+                                                                    <input class="form-check-input mtu1500-speed-checkbox" type="checkbox"
+                                                                        id="mtu1500_autoselect_{{ group.id }}" value="autoselect">
+                                                                    <label class="form-check-label" for="mtu1500_autoselect_{{ group.id }}">autoselect</label>
+                                                                </div>
+                                                                <div class="form-check form-check-inline">
+                                                                    <input class="form-check-input mtu1500-speed-checkbox" type="checkbox"
+                                                                        id="mtu1500_100M_{{ group.id }}" value="100M">
+                                                                    <label class="form-check-label" for="mtu1500_100M_{{ group.id }}">100M</label>
+                                                                </div>
+                                                                <div class="form-check form-check-inline">
+                                                                    <input class="form-check-input mtu1500-speed-checkbox" type="checkbox"
+                                                                        id="mtu1500_1000M_{{ group.id }}" value="1000M">
+                                                                    <label class="form-check-label" for="mtu1500_1000M_{{ group.id }}">1000M</label>
+                                                                </div>
+                                                                <div class="form-check form-check-inline">
+                                                                    <input class="form-check-input mtu1500-speed-checkbox" type="checkbox"
+                                                                        id="mtu1500_2500M_{{ group.id }}" value="2500M">
+                                                                    <label class="form-check-label" for="mtu1500_2500M_{{ group.id }}">2500M</label>
+                                                                </div>
+                                                                <div class="form-check form-check-inline">
+                                                                    <input class="form-check-input mtu1500-speed-checkbox" type="checkbox"
+                                                                        id="mtu1500_5000M_{{ group.id }}" value="5000M">
+                                                                    <label class="form-check-label" for="mtu1500_5000M_{{ group.id }}">5000M</label>
+                                                                </div>
+                                                                <div class="form-check form-check-inline">
+                                                                    <input class="form-check-input mtu1500-speed-checkbox" type="checkbox"
+                                                                        id="mtu1500_10G_{{ group.id }}" value="10G">
+                                                                    <label class="form-check-label" for="mtu1500_10G_{{ group.id }}">10G</label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <!-- MTU=9000 区块 -->
+                                                    <div class="mtu-section">
+                                                        <div class="mtu-header">
+                                                            <span class="mtu-title">MTU=9000</span>
+                                                            <div class="group-actions">
+                                                                <button type="button"
+                                                                    class="btn btn-outline-primary btn-sm mtu9000-select-all">Select All</button>
+                                                                <button type="button"
+                                                                    class="btn btn-outline-secondary btn-sm mtu9000-deselect-all">Unselect All</button>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="option-group">
+                                                            <div class="option-label">Protocol:</div>
+                                                            <div class="option-items">
+                                                                <div class="form-check form-check-inline">
+                                                                    <input class="form-check-input mtu9000-protocol-checkbox" type="checkbox"
+                                                                        id="mtu9000_tcp_{{ group.id }}" value="TCP">
+                                                                    <label class="form-check-label" for="mtu9000_tcp_{{ group.id }}">TCP</label>
+                                                                </div>
+                                                                <div class="form-check form-check-inline">
+                                                                    <input class="form-check-input mtu9000-protocol-checkbox" type="checkbox"
+                                                                        id="mtu9000_udp_{{ group.id }}" value="UDP">
+                                                                    <label class="form-check-label" for="mtu9000_udp_{{ group.id }}">UDP</label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="option-group">
+                                                            <div class="option-label">Speed:</div>
+                                                            <div class="option-items">
+                                                                <div class="form-check form-check-inline">
+                                                                    <input class="form-check-input mtu9000-speed-checkbox" type="checkbox"
+                                                                        id="mtu9000_1000M_{{ group.id }}" value="1000M">
+                                                                    <label class="form-check-label" for="mtu9000_1000M_{{ group.id }}">1000M</label>
+                                                                </div>
+                                                                <div class="form-check form-check-inline">
+                                                                    <input class="form-check-input mtu9000-speed-checkbox" type="checkbox"
+                                                                        id="mtu9000_2500M_{{ group.id }}" value="2500M">
+                                                                    <label class="form-check-label" for="mtu9000_2500M_{{ group.id }}">2500M</label>
+                                                                </div>
+                                                                <div class="form-check form-check-inline">
+                                                                    <input class="form-check-input mtu9000-speed-checkbox" type="checkbox"
+                                                                        id="mtu9000_5000M_{{ group.id }}" value="5000M">
+                                                                    <label class="form-check-label" for="mtu9000_5000M_{{ group.id }}">5000M</label>
+                                                                </div>
+                                                                <div class="form-check form-check-inline">
+                                                                    <input class="form-check-input mtu9000-speed-checkbox" type="checkbox"
+                                                                        id="mtu9000_10G_{{ group.id }}" value="10G">
+                                                                    <label class="form-check-label" for="mtu9000_10G_{{ group.id }}">10G</label>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-text text-muted small mt-2">
+                                                        Note: You can select multiple protocols and speeds simultaneously for each MTU configuration.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                                    Close
+                                                </button>
+                                                <button type="button" class="btn btn-primary save-config-btn" data-group-id="{{ group.id }}">Save</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endif %}
+                                </td>
+                                <td>
+                                    <span class="badge rounded-pill {% if group.status == 'ready' %}text-bg-warning{% elif group.status == 'running' %}bg-primary{% else %}bg-success{% endif %}">
+                                        {{ group.status }}
+                                    </span>
+                                </td>
+                                <td class="text-center">
+                                    <button type="button" class="btn btn-primary btn-sm mx-3 run-test-btn" data-group-id="{{ group.id }}">Run</button>
+                                    <form action="{{ url_for('delete_group', group_id=group.id) }}" method="post" class="d-inline">
+                                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="9" class="text-center text-muted py-4">
+                                <i class="bi bi-inbox"></i> There is no test group, click the "New group" button to add a new test group
+                            </td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block script %}
+<script src="{{ url_for('static', filename='js/index.js') }}"></script>
+{% endblock %}

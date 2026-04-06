@@ -1,0 +1,310 @@
+{% extends "base.html" %}
+{% block title %}Monitor{% endblock %}
+{% import "_macros.html" as macros %}
+{% block contents %}
+    <div class="d-flex justify-content-end align-items-center flex-wrap mb-4 my-4">
+        <form action="{{ url_for('monitors') }}" method="get" class="d-inline">
+            <button class="btn btn-primary" type="submit"><i class="bi bi-arrow-clockwise"></i> Refresh</button>
+        </form>
+    </div>
+    <div class="table-responsive py-2">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th class="text-start" style="max-width: 55px; width: 55px;">NO.</th>
+                    <th class="text-start">Client</th>
+                    <th class="text-start">Server</th>
+                    <th class="text-start">Switch</th>
+                    <th class="text-start">Ethernet Cable</th>
+                    <th class="text-start">EEE status</th>
+                    <th class="text-start">Basic Test</th>
+                    <th class="text-start">Iperf Test</th>
+                    <th class="text-start">Overnight Test</th>
+                    <th class="text-start">Last test time</th>
+                    <th class="text-start">Basic Issues</th>
+                    <th class="text-start">MTU=1500 Issues</th>
+                    <th class="text-start">MTU=9000 Issues</th>
+                    <th class="text-start">Overnight Issues</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if test_results %}
+                    {% for test_result in test_results %}
+                    <tr>
+                        <th class="text-start">{{ loop.index }}</th>
+                        <td class="tooltip-info text-center">
+                            {{ test_result.client_no }} <i class="bi bi-info-circle" style="color: blue;" data-bs-toggle="tooltip"
+                                                           data-bs-placement="right" data-bs-html="true"
+                                                           title="<div class='text-start'>
+                                                           {{ test_result.client_project_code }} {{ test_result.client_phase }}<br>
+                                                           Unit#{{ test_result.client_no }}<br>
+                                                           SN: {{ test_result.client_sn }}<br>
+                                                           Username: {{ test_result.client_username }}<br>
+                                                           Hostname: {{ test_result.client_hostname }}<br>
+                                                           {% if test_result.client_ethernet_info %}{{ test_result.client_ethernet_info }}{% endif %}
+                                                           </div>"></i>
+                        </td>
+                        <td class="tooltip-info text-center">
+                            {{ test_result.server_no }} <i class="bi bi-info-circle" style="color: blue;" data-bs-toggle="tooltip"
+                                                           data-bs-placement="right" data-bs-html="true"
+                                                           title="<div class='text-start'>
+                                                           {{ test_result.server_project_code }} {{ test_result.server_phase }}<br>
+                                                           Unit#{{ test_result.server_no }}<br>
+                                                           SN: {{ test_result.server_sn }}<br>
+                                                           Username: {{ test_result.server_username }}<br>
+                                                           Hostname: {{ test_result.server_hostname }}<br>
+                                                           {% if test_result.server_ethernet_info %}{{ test_result.server_ethernet_info }}{% endif %}
+                                                           </div>"></i>
+                        </td>
+                        <td>
+                            {{ test_result.switch_model }}
+                        </td>
+                        <td>
+                            {{ test_result.cable }}
+                        </td>
+                        <td>
+                            {{ test_result.eee_status }}
+                        </td>
+                        <td class="tooltip-info text-center">
+                            <i class="bi bi-info-circle" style="color: blue;" data-bs-toggle="tooltip"
+                               data-bs-placement="right" data-bs-html="true"
+                               title="<div class='text-start'>
+                               Ping Test: {% if test_result.ping_test %}{{ test_result.ping_test }}{% endif %}<br>
+                               Restart Test: {% if test_result.restart_test %}{{ test_result.restart_test }}{% endif %}<br>
+                               Shutdown Test: {% if test_result.shutdown_test %}{{ test_result.shutdown_test }}{% endif %}<br>
+                               Sleep Test: {% if test_result.sleep_test %}{{ test_result.sleep_test }}{% endif %}<br>
+                               </div>">
+                            </i>
+                        </td>
+                        <td>
+                            <a href="{{ url_for('iperf_detail', result_id=test_result.id) }}"><i class="bi bi-three-dots"></i></a>
+                        </td>
+                        <td class="tooltip-info text-center">
+                            <i class="bi bi-info-circle" style="color: blue;" data-bs-toggle="tooltip"
+                               data-bs-placement="right" data-bs-html="true"
+                               title="<div class='text-start'>
+                               Iperf Overnight Test: <br><pre class='text-center'>{% if test_result.overnight_iperf %}{{ test_result.overnight_iperf }}{% endif %}</pre><br>
+                               Send a large file Test: <br><pre class='text-center'>{% if test_result.send_file %}{{ test_result.send_file }}{% endif %}</pre><br>
+                               Receive a large file Test: <br><pre class='text-center'>{% if test_result.receive_file %}{{ test_result.receive_file }}{% endif %}</pre><br>
+                               </div>">
+                            </i>
+                        </td>
+                        <td>
+                            {{ test_result.update_time }}
+                        </td>
+                        <td class="text-center">
+                            <button type="button" class="btn btn-warning btn-sm mx-3" data-bs-toggle="modal" data-bs-target="#edit_basic_{{ test_result.id }}">
+                                Edit
+                            </button>
+                            <div class="modal fade" data-bs-backdrop="static" id="edit_basic_{{ test_result.id }}" data-bs-keyboard="false" tabindex="-1">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <form action="{{ url_for('edit_basic_issues', result_id=test_result.id) }}" method="post">
+                                            <div class="modal-header">
+                                                <h1 class="modal-title fs-5">Edit basic test issues</h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="form-floating mb-3">
+                                                    <input type="text" class="form-control" id="ping_test" placeholder="ping_test" name="ping_test" {% if test_result.ping_test_issue %}value="{{ test_result.ping_test_issue }}"{% endif %}>
+                                                    <label for="ping_test">Ping Test</label>
+                                                </div>
+                                                <div class="form-floating mb-3">
+                                                    <input type="text" class="form-control" id="restart_test" placeholder="restart_test" name="restart_test" {% if test_result.restart_test_issue %}value="{{ test_result.restart_test_issue }}"{% endif %}>
+                                                    <label for="restart_test">Restart Test</label>
+                                                </div>
+                                                <div class="form-floating mb-3">
+                                                    <input type="text" class="form-control" id="shutdown_test" placeholder="shutdown_test" name="shutdown_test" {% if test_result.shutdown_test_issue %}value="{{ test_result.shutdown_test_issue }}"{% endif %}>
+                                                    <label for="shutdown_test">Shutdown Test</label>
+                                                </div>
+                                                <div class="form-floating mb-3">
+                                                    <input type="text" class="form-control" id="sleep_test" placeholder="sleep_test" name="sleep_test" {% if test_result.sleep_test_issue %}value="{{ test_result.sleep_test_issue }}"{% endif %}>
+                                                    <label for="sleep_test">Sleep Test</label>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                              <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Close</button>
+                                              <button class="btn btn-primary" type="submit">Submit</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            <button type="button" class="btn btn-warning btn-sm mx-3" data-bs-toggle="modal" data-bs-target="#edit_mtu1500_{{ test_result.id }}">
+                                Edit
+                            </button>
+                            <div class="modal fade" data-bs-backdrop="static" id="edit_mtu1500_{{ test_result.id }}" data-bs-keyboard="false" tabindex="-1">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <form action="{{ url_for('edit_mtu1500_issues', result_id=test_result.id) }}" method="post">
+                                            <div class="modal-header">
+                                                <h1 class="modal-title fs-5">Edit</h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="form-floating mb-3">
+                                                    <input type="text" class="form-control" id="autoselect_tcp" placeholder="autoselect_tcp" name="autoselect_tcp" {% if test_result.autoselect_tcp_issue %}value="{{ test_result.autoselect_tcp_issue }}"{% endif %}>
+                                                    <label for="autoselect_tcp">Speed=autoselect Protocol=TCP</label>
+                                                </div>
+                                                <div class="form-floating mb-3">
+                                                    <input type="text" class="form-control" id="autoselect_udp" placeholder="autoselect_udp" name="autoselect_udp" {% if test_result.autoselect_udp_issue %}value="{{ test_result.autoselect_udp_issue }}"{% endif %}>
+                                                    <label for="autoselect_udp">Speed=autoselect Protocol=UDP</label>
+                                                </div>
+                                                <div class="form-floating mb-3">
+                                                    <input type="text" class="form-control" id="mtu1500_100m_tcp" placeholder="mtu1500_100m_tcp" name="mtu1500_100m_tcp" {% if test_result.mtu1500_100_tcp_issue %}value="{{ test_result.mtu1500_100_tcp_issue }}"{% endif %}>
+                                                    <label for="mtu1500_100m_tcp">Speed=100M Protocol=TCP</label>
+                                                </div>
+                                                <div class="form-floating mb-3">
+                                                    <input type="text" class="form-control" id="mtu1500_100m_upd" placeholder="mtu1500_100m_upd" name="mtu1500_100m_upd" {% if test_result.mtu1500_100_udp_issue %}value="{{ test_result.mtu1500_100_udp_issue }}"{% endif %}>
+                                                    <label for="mtu1500_100m_upd">Speed=100M Protocol=UDP</label>
+                                                </div>
+                                                <div class="form-floating mb-3">
+                                                    <input type="text" class="form-control" id="mtu1500_1g_tcp" placeholder="mtu1500_1g_tcp" name="mtu1500_1g_tcp" {% if test_result.mtu1500_1g_tcp_issue %}value="{{ test_result.mtu1500_1g_tcp_issue }}"{% endif %}>
+                                                    <label for="mtu1500_1g_tcp">Speed=1000M Protocol=TCP</label>
+                                                </div>
+                                                <div class="form-floating mb-3">
+                                                    <input type="text" class="form-control" id="mtu1500_1g_upd" placeholder="mtu1500_1g_upd" name="mtu1500_1g_upd" {% if test_result.mtu1500_1g_udp_issue %}value="{{ test_result.mtu1500_1g_udp_issue }}"{% endif %}>
+                                                    <label for="mtu1500_1g_upd">Speed=1000M Protocol=UDP</label>
+                                                </div>
+                                                <div class="form-floating mb-3">
+                                                    <input type="text" class="form-control" id="mtu1500_2500m_tcp" placeholder="mtu1500_2500m_tcp" name="mtu1500_2500m_tcp" {% if test_result.mtu1500_2500_tcp_issue %}value="{{ test_result.mtu1500_2500_tcp_issue }}"{% endif %}>
+                                                    <label for="mtu1500_2500m_tcp">Speed=2500M Protocol=TCP</label>
+                                                </div>
+                                                <div class="form-floating mb-3">
+                                                    <input type="text" class="form-control" id="mtu1500_2500m_upd" placeholder="mtu1500_2500m_upd" name="mtu1500_2500m_upd" {% if test_result.mtu1500_2500_udp_issue %}value="{{ test_result.mtu1500_2500_udp_issue }}"{% endif %}>
+                                                    <label for="mtu1500_2500m_upd">Speed=2500M Protocol=UDP</label>
+                                                </div>
+                                                <div class="form-floating mb-3">
+                                                    <input type="text" class="form-control" id="mtu1500_5g_tcp" placeholder="mtu1500_5g_tcp" name="mtu1500_5g_tcp" {% if test_result.mtu1500_5g_tcp_issue %}value="{{ test_result.mtu1500_5g_tcp_issue }}"{% endif %}>
+                                                    <label for="mtu1500_5g_tcp">Speed=5000M Protocol=TCP</label>
+                                                </div>
+                                                <div class="form-floating mb-3">
+                                                    <input type="text" class="form-control" id="mtu1500_5g_upd" placeholder="mtu1500_5g_upd" name="mtu1500_5g_upd" {% if test_result.mtu1500_5g_udp_issue %}value="{{ test_result.mtu1500_5g_udp_issue }}"{% endif %}>
+                                                    <label for="mtu1500_5g_upd">Speed=5000M Protocol=UDP</label>
+                                                </div>
+                                                <div class="form-floating mb-3">
+                                                    <input type="text" class="form-control" id="mtu1500_10g_tcp" placeholder="mtu1500_10g_tcp" name="mtu1500_10g_tcp" {% if test_result.mtu1500_10g_tcp_issue %}value="{{ test_result.mtu1500_10g_tcp_issue }}"{% endif %}>
+                                                    <label for="mtu1500_10g_tcp">Speed=10G Protocol=TCP</label>
+                                                </div>
+                                                <div class="form-floating mb-3">
+                                                    <input type="text" class="form-control" id="mtu1500_10g_upd" placeholder="mtu1500_10g_upd" name="mtu1500_10g_upd" {% if test_result.mtu1500_10g_udp_issue %}value="{{ test_result.mtu1500_10g_udp_issue }}"{% endif %}>
+                                                    <label for="mtu1500_10g_upd">Speed=10G Protocol=UDP</label>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                              <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Close</button>
+                                              <button class="btn btn-primary" type="submit">Submit</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            <button type="button" class="btn btn-warning btn-sm mx-3" data-bs-toggle="modal" data-bs-target="#edit_mtu9000_{{ test_result.id }}">
+                                Edit
+                            </button>
+                            <div class="modal fade" data-bs-backdrop="static" id="edit_mtu9000_{{ test_result.id }}" data-bs-keyboard="false" tabindex="-1">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <form action="{{ url_for('edit_mtu9000_issues', result_id=test_result.id) }}" method="post">
+                                            <div class="modal-header">
+                                                <h1 class="modal-title fs-5">Edit</h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="form-floating mb-3">
+                                                    <input type="text" class="form-control" id="mtu9000_1g_tcp" placeholder="mtu9000_1g_tcp" name="mtu9000_1g_tcp" {% if test_result.mtu9000_1g_tcp_issue %}value="{{ test_result.mtu9000_1g_tcp_issue }}"{% endif %}>
+                                                    <label for="mtu9000_1g_tcp">Speed=1000M Protocol=TCP</label>
+                                                </div>
+                                                <div class="form-floating mb-3">
+                                                    <input type="text" class="form-control" id="mtu9000_1g_upd" placeholder="mtu9000_1g_upd" name="mtu9000_1g_upd" {% if test_result.mtu9000_1g_udp_issue %}value="{{ test_result.mtu9000_1g_udp_issue }}"{% endif %}>
+                                                    <label for="mtu9000_1g_upd">Speed=1000M Protocol=UDP</label>
+                                                </div>
+                                                <div class="form-floating mb-3">
+                                                    <input type="text" class="form-control" id="mtu9000_2500m_tcp" placeholder="mtu9000_2500m_tcp" name="mtu9000_2500m_tcp" {% if test_result.mtu9000_2500_tcp_issue %}value="{{ test_result.mtu9000_2500_tcp_issue }}"{% endif %}>
+                                                    <label for="mtu9000_2500m_tcp">Speed=2500M Protocol=TCP</label>
+                                                </div>
+                                                <div class="form-floating mb-3">
+                                                    <input type="text" class="form-control" id="mtu9000_2500m_upd" placeholder="mtu9000_2500m_upd" name="mtu9000_2500m_upd" {% if test_result.mtu9000_2500_udp_issue %}value="{{ test_result.mtu9000_2500_udp_issue }}"{% endif %}>
+                                                    <label for="mtu9000_2500m_upd">Speed=2500M Protocol=UDP</label>
+                                                </div>
+                                                <div class="form-floating mb-3">
+                                                    <input type="text" class="form-control" id="mtu9000_5g_tcp" placeholder="mtu9000_5g_tcp" name="mtu9000_5g_tcp" {% if test_result.mtu9000_5g_tcp_issue %}value="{{ test_result.mtu9000_5g_tcp_issue }}"{% endif %}>
+                                                    <label for="mtu9000_5g_tcp">Speed=5000M Protocol=TCP</label>
+                                                </div>
+                                                <div class="form-floating mb-3">
+                                                    <input type="text" class="form-control" id="mtu9000_5g_upd" placeholder="mtu9000_5g_upd" name="mtu9000_5g_upd" {% if test_result.mtu9000_5g_udp_issue %}value="{{ test_result.mtu9000_5g_udp_issue }}"{% endif %}>
+                                                    <label for="mtu9000_5g_upd">Speed=5000M Protocol=UDP</label>
+                                                </div>
+                                                <div class="form-floating mb-3">
+                                                    <input type="text" class="form-control" id="mtu9000_10g_tcp" placeholder="mtu9000_10g_tcp" name="mtu9000_10g_tcp" {% if test_result.mtu9000_10g_tcp_issue %}value="{{ test_result.mtu9000_10g_tcp_issue }}"{% endif %}>
+                                                    <label for="mtu9000_10g_tcp">Speed=10G Protocol=TCP</label>
+                                                </div>
+                                                <div class="form-floating mb-3">
+                                                    <input type="text" class="form-control" id="mtu9000_10g_upd" placeholder="mtu9000_10g_upd" name="mtu9000_10g_upd" {% if test_result.mtu9000_10g_udp_issue %}value="{{ test_result.mtu9000_10g_udp_issue }}"{% endif %}>
+                                                    <label for="mtu9000_10g_upd">Speed=10G Protocol=UDP</label>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                              <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Close</button>
+                                              <button class="btn btn-primary" type="submit">Submit</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            <button type="button" class="btn btn-warning btn-sm mx-3" data-bs-toggle="modal" data-bs-target="#edit_overnight_{{ test_result.id }}">
+                                Edit
+                            </button>
+                            <div class="modal fade" data-bs-backdrop="static" id="edit_overnight_{{ test_result.id }}" data-bs-keyboard="false" tabindex="-1">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <form action="{{ url_for('edit_overnight_issues', result_id=test_result.id) }}" method="post">
+                                            <div class="modal-header">
+                                                <h1 class="modal-title fs-5">Edit</h1>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <div class="form-floating mb-3">
+                                                    <input type="text" class="form-control" id="send_file_issue" placeholder="send_file_issue" name="send_file_issue" {% if test_result.send_file_issue %}value="{{ test_result.send_file_issue }}"{% endif %}>
+                                                    <label for="send_file_issue">Send a large file</label>
+                                                </div>
+                                                <div class="form-floating mb-3">
+                                                    <input type="text" class="form-control" id="receive_file_issue" placeholder="receive_file_issue" name="receive_file_issue" {% if test_result.receive_file_issue %}value="{{ test_result.receive_file_issue }}"{% endif %}>
+                                                    <label for="receive_file_issue">Receive a large file</label>
+                                                </div>
+                                                <div class="form-floating mb-3">
+                                                    <input type="text" class="form-control" id="iperf_overnight" placeholder="iperf_overnight" name="iperf_overnight" {% if test_result.overnight_iperf_issue %}value="{{ test_result.overnight_iperf_issue }}"{% endif %}>
+                                                    <label for="iperf_overnight">Iperf overnight test</label>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                              <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Close</button>
+                                              <button class="btn btn-primary" type="submit">Submit</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                <tr>
+                    <td colspan="14" class="text-center text-muted py-4">
+                        <i class="bi bi-inbox"></i> There is no test record now.
+                    </td>
+                </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+    <div class="pagination">
+          {{ macros.pagination_widget(pagination, ".monitors") }}
+    </div>
+{% endblock %}

@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Server Management{% endblock %}
+{% import "_macros.html" as macros %}
+{% block contents %}
+    <div class="d-flex justify-content-end align-items-center flex-wrap mb-4 my-4">
+        <button class="btn btn-primary" data-bs-target="#addNewCable" data-bs-toggle="modal"><i class="bi bi-plus-circle"></i> New cable</button>
+        <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" id="addNewCable">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <form action="{{ url_for('add_cable') }}" method="post" class="needs-validation" novalidate>
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5">Add new cable</h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                  <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="cable_info" placeholder="cable_info" name="cable_info" required/>
+                    <label for="cable_info">Cable Information</label>
+                    <div class="invalid-feedback">
+                        "Cable Information" required
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Close</button>
+                  <button class="btn btn-primary" type="submit">Submit</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+    </div>
+    <div class="table-responsive py-2">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th class="text-start" style="max-width: 55px; width: 55px;">NO.</th>
+                    <th class="text-start">Cable Information</th>
+                    <th class="text-center">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for cable in cables %}
+                <tr>
+                    <th class="text-start">{{ cables.index(cable) + 1 }}</th>
+                    <td class="text-start">{{ cable.cable_info }}</td>
+                    <td class="text-center">
+                        <form action="{{ url_for('delete_cable', cable_id=cable.id) }}" method="post" class="d-inline"
+                        onsubmit="return confirm('Are you sure you want to delete cable: {{ cable.cable_info }}?');">
+                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        </form>
+                    </td>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="pagination">
+      {{ macros.pagination_widget(pagination, ".cables_management") }}
+    </div>
+{% endblock %}

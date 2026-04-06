@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+{% block title %}
+Switch Management
+{% endblock %}
+{% import "_macros.html" as macros %}
+{% block contents %}
+    <div class="d-flex justify-content-end align-items-center flex-wrap mb-4 my-4">
+        <button class="btn btn-primary" data-bs-target="#addNewSwitch" data-bs-toggle="modal"><i class="bi bi-plus-circle"></i> New switch</button>
+        <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" id="addNewSwitch">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <form action="{{ url_for('add_switch') }}" method="post" class="needs-validation" novalidate>
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5">Add new switch</h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                  <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="vendor" placeholder="vendor" name="vendor" required/>
+                    <label for="vendor">Vendor</label>
+                    <div class="invalid-feedback">
+                        Vendor required
+                    </div>
+                  </div>
+                  <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="model" placeholder="model" name="model" required>
+                    <label for="model">Model</label>
+                    <div class="invalid-feedback">
+                        Model required
+                    </div>
+                  </div>
+                  <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="description" placeholder="description" name="description" required>
+                    <label for="description">Description</label>
+                    <div class="invalid-feedback">
+                        Description required
+                    </div>
+                  </div>
+                  <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="capabilities" placeholder="capabilities" name="capabilities" required>
+                    <label for="capabilities">Capabilities</label>
+                    <div class="invalid-feedback">
+                        Capabilities required
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Close</button>
+                  <button class="btn btn-primary" type="submit">Submit</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+    </div>
+    <div class="table-responsive py-2">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th class="text-start" style="max-width: 55px; width: 55px;">NO.</th>
+                    <th class="text-start">Make(Vendor)</th>
+                    <th class="text-start">Model</th>
+                    <th class="text-start">Description</th>
+                    <th class="text-start">Capabilities</th>
+                    <th class="text-center">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for switch in switches %}
+                <tr>
+                    <th class="text-start">{{ switches.index(switch) + 1 }}</th>
+                    <td class="text-start">{{ switch.vendor }}</td>
+                    <td class="text-start">{{ switch.model }}</td>
+                    <td class="text-start">{{ switch.description }}</td>
+                    <td class="text-start">{{ switch.capabilities }}</td>
+                    <td class="text-center">
+                        <button type="button" class="btn btn-warning btn-sm mx-3" data-bs-toggle="modal" data-bs-target="#edit_switch_{{ switch.id }}">
+                            Edit
+                        </button>
+                        <div class="modal fade" data-bs-backdrop="static" id="edit_switch_{{ switch.id }}" data-bs-keyboard="false" tabindex="-1">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <form action="{{ url_for('edit_switch', switch_id=switch.id) }}" method="post" class="needs-validation" novalidate>
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5">Edit Switch</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="form-floating mb-3">
+                                                <input type="text" class="form-control" id="new_vendor" placeholder="vendor" name="vendor" value="{{ switch.vendor }}" required>
+                                                <label for="new_vendor">Vendor</label>
+                                                <div class="invalid-feedback">
+                                                    Vendor required
+                                                </div>
+                                              </div>
+                                              <div class="form-floating mb-3">
+                                                <input type="text" class="form-control" id="new_model" placeholder="model" name="model" value="{{ switch.model }}" required>
+                                                <label for="new_model">Model</label>
+                                                <div class="invalid-feedback">
+                                                    Model required
+                                                </div>
+                                              </div>
+                                              <div class="form-floating mb-3">
+                                                <input type="text" class="form-control" id="new_description" placeholder="description" name="description" value="{{ switch.description }}" required>
+                                                <label for="new_description">Description</label>
+                                                <div class="invalid-feedback">
+                                                    Description required
+                                                </div>
+                                              </div>
+                                              <div class="form-floating mb-3">
+                                                <input type="text" class="form-control" id="new_capabilities" placeholder="capabilities" name="capabilities" value="{{ switch.capabilities }}" required>
+                                                <label for="new_capabilities">Capabilities</label>
+                                                <div class="invalid-feedback">
+                                                    Capabilities required
+                                                </div>
+                                              </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                          <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Close</button>
+                                          <button class="btn btn-primary" type="submit">Submit</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <form action="{{ url_for('delete_switch', switch_id=switch.id) }}" method="post" class="d-inline"
+                        onsubmit="return confirm('Are you sure you want to delete switch: {{ switch.model }}?');">
+                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        </form>
+                    </td>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="pagination">
+      {{ macros.pagination_widget(pagination, ".switches_management") }}
+    </div>
+{% endblock %}

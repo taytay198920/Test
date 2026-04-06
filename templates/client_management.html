@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+{% block title %}Client Management{% endblock %}
+{% import "_macros.html" as macros %}
+{% block contents %}
+    <div class="d-flex justify-content-end align-items-center flex-wrap mb-4 my-4">
+        <button class="btn btn-primary" data-bs-target="#addNewClient" data-bs-toggle="modal"><i class="bi bi-plus-circle"></i> New client</button>
+        <div class="modal fade" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" id="addNewClient">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <form action="{{ url_for('add_client') }}" method="post" class="needs-validation" novalidate>
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5">Add new client</h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                  <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="unit_no" placeholder="unit_no" name="unit_no" required/>
+                    <label for="unit_no">Unit NO.</label>
+                    <div class="invalid-feedback">
+                        "Unit NO." required
+                    </div>
+                  </div>
+                  <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="unit_sn" placeholder="unit_sn" name="unit_sn" required>
+                    <label for="unit_sn">SN</label>
+                    <div class="invalid-feedback">
+                        "SN" required
+                    </div>
+                  </div>
+                  <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="user" placeholder="user" name="user" required>
+                    <label for="user">Username</label>
+                    <div class="invalid-feedback">
+                        "Username" required
+                    </div>
+                  </div>
+                  <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="unit_phase" placeholder="unit_phase" name="unit_phase" required>
+                    <label for="unit_phase">Unit Phase</label>
+                    <div class="invalid-feedback">
+                        "Unit Phase" required
+                    </div>
+                  </div>
+                  <div class="form-floating mb-3">
+                    <input type="text" class="form-control" id="project_code" placeholder="project_code" name="project_code" required>
+                    <label for="project_code">Project Code</label>
+                    <div class="invalid-feedback">
+                        "Project Code" required
+                    </div>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Close</button>
+                  <button class="btn btn-primary" type="submit">Submit</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+    </div>
+    <div class="table-responsive py-2">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th class="text-start" style="max-width: 55px; width: 55px;">NO.</th>
+                    <th class="text-start">Unit#</th>
+                    <th class="text-start">SN</th>
+                    <th class="text-start">Username</th>
+                    <th class="text-start">Phase</th>
+                    <th class="text-start">Project Code</th>
+                    <th class="text-center">Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for client in clients %}
+                <tr>
+                    <th class="text-start">{{ clients.index(client) + 1 }}</th>
+                    <td class="text-start">{{ client.unit_no }}</td>
+                    <td class="text-start">{{ client.unit_sn }}</td>
+                    <td class="text-start">{{ client.user }}</td>
+                    <td class="text-start">{{ client.unit_phase }}</td>
+                    <td class="text-start">{{ client.project_code }}</td>
+                    <td class="text-center">
+                        <button type="button" class="btn btn-warning btn-sm mx-3" data-bs-toggle="modal" data-bs-target="#edit_client_{{ client.id }}">
+                            Edit
+                        </button>
+                        <div class="modal fade" data-bs-backdrop="static" id="edit_client_{{ client.id }}" data-bs-keyboard="false" tabindex="-1">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <form action="{{ url_for('edit_client', client_id=client.id) }}" method="post" class="needs-validation" novalidate>
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5">Edit Client</h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="form-floating mb-3">
+                                                <input type="text" class="form-control" id="new_no" placeholder="new_no" name="new_no" value="{{ client.unit_no }}" required>
+                                                <label for="new_no">Unit NO.</label>
+                                                <div class="invalid-feedback">
+                                                    "Unit NO." required
+                                                </div>
+                                              </div>
+                                              <div class="form-floating mb-3">
+                                                <input type="text" class="form-control" id="new_sn" placeholder="new_sn" name="new_sn" value="{{ client.unit_sn }}" required>
+                                                <label for="new_sn">SN</label>
+                                                <div class="invalid-feedback">
+                                                    "SN" required
+                                                </div>
+                                              </div>
+                                              <div class="form-floating mb-3">
+                                                <input type="text" class="form-control" id="new_user" placeholder="new_user" name="new_user" value="{{ client.user }}" required>
+                                                <label for="new_user">Username</label>
+                                                <div class="invalid-feedback">
+                                                    "Username" required
+                                                </div>
+                                              </div>
+                                              <div class="form-floating mb-3">
+                                                <input type="text" class="form-control" id="new_phase" placeholder="new_phase" name="new_phase" value="{{ client.unit_phase }}" required>
+                                                <label for="new_phase">Phase</label>
+                                                <div class="invalid-feedback">
+                                                    "Phase" required
+                                                </div>
+                                              </div>
+                                              <div class="form-floating mb-3">
+                                                <input type="text" class="form-control" id="new_code" placeholder="new_code" name="new_code" value="{{ client.project_code }}" required>
+                                                <label for="new_code">Project Code</label>
+                                                <div class="invalid-feedback">
+                                                    "Project Code" required
+                                                </div>
+                                              </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                          <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">Close</button>
+                                          <button class="btn btn-primary" type="submit">Submit</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                        <form action="{{ url_for('delete_client', client_id=client.id) }}" method="post" class="d-inline"
+                        onsubmit="return confirm('Are you sure you want to delete client: {{ client.unit_no }}?');">
+                            <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                        </form>
+                    </td>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="pagination">
+      {{ macros.pagination_widget(pagination, ".clients_management") }}
+    </div>
+{% endblock %}
