@@ -182,6 +182,6 @@ class Result(db.Model):
     mtu9000_10g_tcp_issue = db.Column(db.Text)
     mtu9000_10g_udp_issue = db.Column(db.Text)
 
-    update_time = db.Column(db.DateTime)
+    update_time = db.Column(db.String(60))
     is_exported = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime)

@@ -530,6 +530,7 @@ def update_test_result():
         send_file = data.get("send_file")
         receive_file = data.get("receive_file")
         overnight_iperf = data.get("overnight_iperf")
+        update_time = data["update_time"]
 
         result = Result.query.filter(and_(Result.switch_model == switch_model, Result.client_os_version == client_os_version)).first()
         log.info(result)
@@ -588,6 +589,7 @@ def update_test_result():
             result.send_file = send_file
         if receive_file:
             result.receive_file = receive_file
+        result.update_time = update_time
 
         db.session.commit()
         return jsonify({
