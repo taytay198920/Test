@@ -4,7 +4,7 @@
 # @File     : models.py
 
 
-
+from datetime import datetime
 from libs.config import db
 
 
@@ -184,4 +184,4 @@ class Result(db.Model):
 
     update_time = db.Column(db.String(60))
     is_exported = db.Column(db.Boolean, default=False)
-    created_at = db.Column(db.DateTime)
+    created_at = db.Column(db.DateTime, default=datetime.now())
