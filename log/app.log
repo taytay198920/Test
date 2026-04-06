@@ -1,0 +1,5 @@
+2026-04-06 22:24:26 - app.py - update_test_result - 501 - INFO - update data: {'ping_test': 'Pass', 'sleep_test': 'Fail', 'restart_test': 'Pass', 'mtu1500_autoselect_tcp': '9.41 Gbit/s\n9.41 Gbit/s\n9.41 Gbit/s\n9.41 Gbit/s\n9.41 Gbit/s\n9.41 Gbit/s', 'mtu1500_autoselect_udp': '8.40 Gbit/s\n8.40 Gbit/s\n5.35 Gbit/s\n7.65 Gbit/s\n6.35 Gbit/s\n5.32 Gbit/s', 'mtu1500_2500_tcp': '2.35 Gbit/s\n2.35 Gbit/s\n2.35 Gbit/s\n2.35 Gbit/s\n2.35 Gbit/s\n2.35 Gbit/s\n', 'switch_model': 'GS110MX(Connect port 1 ~ port 2 <10GB>)', 'client_os_version': 'QQQ'}
+2026-04-06 22:24:26 - app.py - update_test_result - 535 - INFO - None
+2026-04-06 22:24:26 - app.py - update_test_result - 600 - ERROR - update result error: 'NoneType' object has no attribute 'ping_test' and no __dict__ for setting new attributes
+2026-04-06 22:32:19 - app.py - update_test_result - 501 - INFO - update data: {'overnight_iperf': '9.41 Gbit/s\n9.41 Gbit/s', 'send_file': '450.4 Mbit/s\n358.7 Mbit/s\n254.3 Mbit/s', 'switch_model': 'GS110MX(Connect port 1 ~ port 2 <10GB>)', 'client_os_version': 'OOOO'}
+2026-04-06 22:32:19 - app.py - update_test_result - 535 - INFO - <Result 1>

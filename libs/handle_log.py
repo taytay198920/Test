@@ -10,9 +10,6 @@ from libs.handle_path import log_path
 
 
 def init_logger():
-    with open(log_path, 'w'):
-        pass
-
     logger = logging.getLogger('app')
     logger.setLevel(logging.DEBUG)
     logger.addHandler(logging.NullHandler())

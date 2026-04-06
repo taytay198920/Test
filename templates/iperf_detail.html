@@ -7,35 +7,35 @@ Iperf result
 <table class="table table-striped">
     <thead>
         <tr>
-            <th>Speed=autoselect Protocol=TCP</th>
-            <th>Speed=autoselect Protocol=UDP</th>
-            <th>Speed=100M  Protocol=TCP</th>
-            <th>Speed=1000M  Protocol=TCP</th>
-            <th>Speed=2500M  Protocol=TCP</th>
-            <th>Speed=5000M  Protocol=TCP</th>
-            <th>Speed=10000M  Protocol=TCP</th>
-            <th>Speed=100M  Protocol=UDP</th>
-            <th>Speed=1000M  Protocol=UDP</th>
-            <th>Speed=2500M  Protocol=UDP</th>
-            <th>Speed=5000M  Protocol=UDP</th>
-            <th>Speed=10000M  Protocol=UDP</th>
+            <th class="text-center">Speed=autoselect Protocol=TCP</th>
+            <th class="text-center">Speed=autoselect Protocol=UDP</th>
+            <th class="text-center">Speed=100M  Protocol=TCP</th>
+            <th class="text-center">Speed=1000M  Protocol=TCP</th>
+            <th class="text-center">Speed=2500M  Protocol=TCP</th>
+            <th class="text-center">Speed=5000M  Protocol=TCP</th>
+            <th class="text-center">Speed=10000M  Protocol=TCP</th>
+            <th class="text-center">Speed=100M  Protocol=UDP</th>
+            <th class="text-center">Speed=1000M  Protocol=UDP</th>
+            <th class="text-center">Speed=2500M  Protocol=UDP</th>
+            <th class="text-center">Speed=5000M  Protocol=UDP</th>
+            <th class="text-center">Speed=10000M  Protocol=UDP</th>
         </tr>
     </thead>
     <tbody>
         {% if result %}
         <tr>
-            <td>{{ result.mtu1500_autoselect_tcp }}</td>
-            <td>{{ result.mtu1500_autoselect_udp }}</td>
-            <td>{{ result.mtu1500_100_tcp }}</td>
-            <td>{{ result.mtu1500_1g_tcp }}</td>
-            <td>{{ result.mtu1500_2500_tcp }}</td>
-            <td>{{ result.mtu1500_5g_tcp }}</td>
-            <td>{{ result.mtu1500_10g_tcp }}</td>
-            <td>{{ result.mtu1500_100_udp }}</td>
-            <td>{{ result.mtu1500_1g_udp }}</td>
-            <td>{{ result.mtu1500_2500_udp }}</td>
-            <td>{{ result.mtu1500_5g_udp }}</td>
-            <td>{{ result.mtu1500_10g_udp }}</td>
+            <td>{% if result.mtu1500_autoselect_tcp %}<pre>{{ result.mtu1500_autoselect_tcp }}</pre>{% endif %}</td>
+            <td>{% if result.mtu1500_autoselect_udp %}<pre>{{ result.mtu1500_autoselect_udp }}</pre>{% endif %}</td>
+            <td>{% if result.mtu1500_100_tcp %}<pre>{{ result.mtu1500_100_tcp }}</pre>{% endif %}</td>
+            <td>{% if result.mtu1500_1g_tcp %}<pre>{{ result.mtu1500_1g_tcp }}</pre>{% endif %}</td>
+            <td>{% if result.mtu1500_2500_tcp %}<pre>{{ result.mtu1500_2500_tcp }}</pre>{% endif %}</td>
+            <td>{% if result.mtu1500_5g_tcp %}<pre>{{ result.mtu1500_5g_tcp }}</pre>{% endif %}</td>
+            <td>{% if result.mtu1500_10g_tcp %}<pre>{{ result.mtu1500_10g_tcp }}</pre>{% endif %}</td>
+            <td>{% if result.mtu1500_100_udp %}<pre>{{ result.mtu1500_100_udp }}</pre>{% endif %}</td>
+            <td>{% if result.mtu1500_1g_udp %}<pre>{{ result.mtu1500_1g_udp }}</pre>{% endif %}</td>
+            <td>{% if result.mtu1500_2500_udp %}<pre>{{ result.mtu1500_2500_udp }}</pre>{% endif %}</td>
+            <td>{% if result.mtu1500_5g_udp %}<pre>{{ result.mtu1500_5g_udp }}</pre>{% endif %}</td>
+            <td>{% if result.mtu1500_10g_udp %}<pre>{{ result.mtu1500_10g_udp }}</pre>{% endif %}</td>
         </tr>
         {% else %}
         <tr>
@@ -50,27 +50,27 @@ Iperf result
 <table class="table table-striped">
     <thead>
         <tr>
-            <th>Speed=1000M  Protocol=TCP</th>
-            <th>Speed=2500M  Protocol=TCP</th>
-            <th>Speed=5000M  Protocol=TCP</th>
-            <th>Speed=10000M  Protocol=TCP</th>
-            <th>Speed=1000M  Protocol=UDP</th>
-            <th>Speed=2500M  Protocol=UDP</th>
-            <th>Speed=5000M  Protocol=UDP</th>
-            <th>Speed=10000M  Protocol=UDP</th>
+            <th class="text-center">Speed=1000M  Protocol=TCP</th>
+            <th class="text-center">Speed=2500M  Protocol=TCP</th>
+            <th class="text-center">Speed=5000M  Protocol=TCP</th>
+            <th class="text-center">Speed=10000M  Protocol=TCP</th>
+            <th class="text-center">Speed=1000M  Protocol=UDP</th>
+            <th class="text-center">Speed=2500M  Protocol=UDP</th>
+            <th class="text-center">Speed=5000M  Protocol=UDP</th>
+            <th class="text-center">Speed=10000M  Protocol=UDP</th>
         </tr>
     </thead>
     <tbody>
         {% if result %}
         <tr>
-            <td>{{ result.mtu9000_1g_tcp }}</td>
-            <td>{{ result.mtu9000_2500_tcp }}</td>
-            <td>{{ result.mtu9000_5g_tcp }}</td>
-            <td>{{ result.mtu9000_10g_tcp }}</td>
-            <td>{{ result.mtu9000_1g_udp }}</td>
-            <td>{{ result.mtu9000_2500_udp }}</td>
-            <td>{{ result.mtu9000_5g_udp }}</td>
-            <td>{{ result.mtu9000_10g_udp }}</td>
+            <td>{% if result.mtu9000_1g_tcp %}<pre>{{ result.mtu9000_1g_tcp }}</pre>{% endif %}</td>
+            <td>{% if result.mtu9000_2500_tcp %}<pre>{{ result.mtu9000_2500_tcp }}</pre>{% endif %}</td>
+            <td>{% if result.mtu9000_5g_tcp %}<pre>{{ result.mtu9000_5g_tcp }}</pre>{% endif %}</td>
+            <td>{% if result.mtu9000_10g_tcp %}<pre>{{ result.mtu9000_10g_tcp }}</pre>{% endif %}</td>
+            <td>{% if result.mtu9000_1g_udp %}<pre>{{ result.mtu9000_1g_udp }}</pre>{% endif %}</td>
+            <td>{% if result.mtu9000_2500_udp %}<pre>{{ result.mtu9000_2500_udp }}</pre>{% endif %}</td>
+            <td>{% if result.mtu9000_5g_udp %}<pre>{{ result.mtu9000_5g_udp }}</pre>{% endif %}</td>
+            <td>{% if result.mtu9000_10g_udp %}<pre>{{ result.mtu9000_10g_udp }}</pre>{% endif %}</td>
         </tr>
         {% else %}
         <tr>

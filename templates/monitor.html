@@ -12,19 +12,19 @@
             <thead>
                 <tr>
                     <th class="text-start" style="max-width: 55px; width: 55px;">NO.</th>
-                    <th class="text-start">Client</th>
-                    <th class="text-start">Server</th>
+                    <th class="text-center">Client</th>
+                    <th class="text-center">Server</th>
                     <th class="text-start">Switch</th>
                     <th class="text-start">Ethernet Cable</th>
-                    <th class="text-start">EEE status</th>
-                    <th class="text-start">Basic Test</th>
-                    <th class="text-start">Iperf Test</th>
-                    <th class="text-start">Overnight Test</th>
+                    <th class="text-center">EEE status</th>
+                    <th class="text-center">Basic Test</th>
+                    <th class="text-center">Iperf Test</th>
+                    <th class="text-center">Overnight Test</th>
                     <th class="text-start">Last test time</th>
-                    <th class="text-start">Basic Issues</th>
-                    <th class="text-start">MTU=1500 Issues</th>
-                    <th class="text-start">MTU=9000 Issues</th>
-                    <th class="text-start">Overnight Issues</th>
+                    <th class="text-center">Basic Issues</th>
+                    <th class="text-center">MTU=1500 Issues</th>
+                    <th class="text-center">MTU=9000 Issues</th>
+                    <th class="text-center">Overnight Issues</th>
                 </tr>
             </thead>
             <tbody>
@@ -62,7 +62,7 @@
                         <td>
                             {{ test_result.cable }}
                         </td>
-                        <td>
+                        <td class="text-center">
                             {{ test_result.eee_status }}
                         </td>
                         <td class="tooltip-info text-center">
@@ -70,22 +70,22 @@
                                data-bs-placement="right" data-bs-html="true"
                                title="<div class='text-start'>
                                Ping Test: {% if test_result.ping_test %}{{ test_result.ping_test }}{% endif %}<br>
-                               Restart Test: {% if test_result.restart_test %}{{ test_result.restart_test }}{% endif %}<br>
-                               Shutdown Test: {% if test_result.shutdown_test %}{{ test_result.shutdown_test }}{% endif %}<br>
                                Sleep Test: {% if test_result.sleep_test %}{{ test_result.sleep_test }}{% endif %}<br>
+                               Restart Test: {% if test_result.restart_test %}{{ test_result.restart_test }}{% endif %}<br>
+                               Shutdown Test: {% if test_result.shutdown_test %}{{ test_result.shutdown_test }}{% endif %}
                                </div>">
                             </i>
                         </td>
-                        <td>
+                        <td class="text-center">
                             <a href="{{ url_for('iperf_detail', result_id=test_result.id) }}"><i class="bi bi-three-dots"></i></a>
                         </td>
                         <td class="tooltip-info text-center">
                             <i class="bi bi-info-circle" style="color: blue;" data-bs-toggle="tooltip"
                                data-bs-placement="right" data-bs-html="true"
                                title="<div class='text-start'>
-                               Iperf Overnight Test: <br><pre class='text-center'>{% if test_result.overnight_iperf %}{{ test_result.overnight_iperf }}{% endif %}</pre><br>
-                               Send a large file Test: <br><pre class='text-center'>{% if test_result.send_file %}{{ test_result.send_file }}{% endif %}</pre><br>
-                               Receive a large file Test: <br><pre class='text-center'>{% if test_result.receive_file %}{{ test_result.receive_file }}{% endif %}</pre><br>
+                               Iperf Overnight Test: <br><pre class='text-center'>{% if test_result.overnight_iperf %}{{ test_result.overnight_iperf }}{% endif %}</pre>
+                               Send a large file Test: <br><pre class='text-center'>{% if test_result.send_file %}{{ test_result.send_file }}{% endif %}</pre>
+                               Receive a large file Test: <br><pre class='text-center'>{% if test_result.receive_file %}{{ test_result.receive_file }}{% endif %}</pre>
                                </div>">
                             </i>
                         </td>

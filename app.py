@@ -335,7 +335,7 @@ def delete_client(client_id):
 @app.route('/api/monitors', methods=['GET'])
 def monitors():
     page = request.args.get('page', 1, type=int)
-    pagination = Result.query.filter_by(is_exported=False).order_by(Result.id.desc()).paginate(page=page, per_page=100,
+    pagination = Result.query.filter_by(is_exported=False).order_by(Result.id).paginate(page=page, per_page=100,
                                                                                                error_out=False)
     test_results = pagination.items
     return render_template("monitor.html", current_url="monitor", test_results=test_results, pagination=pagination)
@@ -498,6 +498,7 @@ def add_test_result():
 @app.route('/api/update_test_result', methods=["POST"])
 def update_test_result():
     data = request.get_json()
+    log.info(f"update data: {data}")
     try:
         switch_model = data["switch_model"]
         client_os_version = data["client_os_version"]
@@ -530,8 +531,8 @@ def update_test_result():
         receive_file = data.get("receive_file")
         overnight_iperf = data.get("overnight_iperf")
 
-        result = Result.query.filter(and_(Result.switch_model == switch_model, Result.client_os_version == client_os_version)).all()
-        log.info(restart_test)
+        result = Result.query.filter(and_(Result.switch_model == switch_model, Result.client_os_version == client_os_version)).first()
+        log.info(result)
 
         if ping_test:
             result.ping_test = ping_test
@@ -589,10 +590,18 @@ def update_test_result():
             result.receive_file = receive_file
 
         db.session.commit()
+        return jsonify({
+            "status": "success",
+            "message": "result updated successfully"
+        }), 201
 
     except Exception as e:
         db.session.rollback()
         log.error(f"update result error: {e}")
+        return jsonify({
+            "status": "error",
+            "message": f"update result error: {e}"
+        }), 500
 
 @app.route("/api/iperf_detail/<int:result_id>", methods=["GET"])
 def iperf_detail(result_id):
@@ -601,4 +610,6 @@ def iperf_detail(result_id):
 
 
 if __name__ == '__main__':
+    with open(log_path, 'w'):
+        pass
     app.run(debug=True, host='127.0.0.1', port=5002)
