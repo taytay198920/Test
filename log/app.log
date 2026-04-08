@@ -1,2 +1,0 @@
-2026-04-06 23:02:13 - app.py - update_test_result - 501 - INFO - update data: {'update_time': '2026-04-06 23:02:13', 'send_file': '450.4 Mbit/s\n358.7 Mbit/s\n254.3 Mbit/s', 'switch_model': 'GS110MX(Connect port 1 ~ port 2 <10GB>)', 'client_os_version': 'OOOO'}
-2026-04-06 23:02:13 - app.py - update_test_result - 536 - INFO - <Result 1>

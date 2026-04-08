@@ -14,11 +14,12 @@ def execute(command):
         p = subprocess.run(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, timeout=30, text=True)
     except subprocess.TimeoutExpired:
         log.info("Command timed out")
-        return {"error": "Command timed out"}
+        raise RuntimeError("Command timed out")
     else:
         returncode = p.returncode
+        if returncode != 0:
+            raise RuntimeError("Command execute failed")
         stdout = p.stdout
         stderr = p.stderr
         response = {"success": True, "stdout": stdout, "stderr": stderr, "returncode": returncode}
         log.debug("command response: %s", response)
-        return response

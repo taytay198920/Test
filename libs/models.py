@@ -185,3 +185,4 @@ class Result(db.Model):
     update_time = db.Column(db.String(60))
     is_exported = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.now())
+    current_test_item = db.Column(db.String(100))
