@@ -186,3 +186,12 @@ class Result(db.Model):
     is_exported = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.now())
     current_test_item = db.Column(db.String(100))
+
+    def get_non_empty_fields(self):
+        """返回当前实例中值不为空的字段字典"""
+        result = {}
+        for column in self.__table__.columns:
+            value = getattr(self, column.name)
+            if value is not None and value != "":
+                result[column.name] = value
+        return result
